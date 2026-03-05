@@ -1,0 +1,40 @@
+class Logger:
+    @staticmethod
+    def log_result(result):
+        """Запись результатов в файл (JSON)"""
+        log_entry = {
+            'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'secret_number': result['secret_number'],
+            'attempts_used': result['attempts_used'],
+            'time': round(result['time_elapsed'], 2),
+            'final_score': result['final_score'],
+            'won': result['won']
+        }
+
+        try:
+            with open('history.json', 'a', encoding='utf-8') as f:
+                f.write(json.dumps(log_entry, ensure_ascii=False) + '\n')
+            print("Результат записан в историю игры.")
+        except Exception as e:
+            print(f"Ошибка при записи в файл: {e}")
+
+
+    @staticmethod
+    def display_history():
+        """Отображение истории игр"""
+        try:
+            with open('history.json', 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+                if not lines:
+                    print("История игр пуста.")
+                    return
+
+                print("\n--- История последних игр ---")
+                for line in lines[-5:]:  # Последние 5 игр
+                    game = json.loads(line)
+                    status = "Победа" if game['won'] else "Поражение"
+                    print(f"{game['date']} | Число: {game['secret_number']} | "
+                  f"Попыток: {game['attempts_used']} | Время: {game['time']}с | "
+                  f"Очки: {game['final_score']} | {status}")
+        except FileNotFoundError:
+            print("Файл истории не найден.")
