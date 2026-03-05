@@ -1,0 +1,21 @@
+class InputValidator:
+    @staticmethod
+    def get_integer(prompt):
+        """Валидация целочисленного ввода"""
+        while True:
+            try:
+                return int(input(prompt))
+            except ValueError:
+                print("Ошибка! Введите целое число.")
+
+    @staticmethod
+    def get_boolean(prompt):
+        """Валидация булевого ввода"""
+        while True:
+            response = input(prompt).lower()
+            if response in ['да', 'д', 'yes', 'y']:
+                return True
+            elif response in ['нет', 'н', 'no', 'n']:
+                return False
+            else:
+                print("Ошибка! Ответьте 'да' или 'нет'.")
