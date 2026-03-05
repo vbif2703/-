@@ -1,0 +1,57 @@
+class GameLogic:
+    @staticmethod
+    def generate_number(min_val, max_val):
+        """Генерация случайного числа в заданном диапазоне"""
+        return random.randint(min_val, max_val)
+
+    @staticmethod
+    def play_round(min_val, max_val, max_attempts, hints_enabled, start_score):
+        """Основной игровой цикл"""
+        secret_number = GameLogic.generate_number(min_val, max_val)
+        attempts = 0
+        start_time = time.time()
+
+        print(f"\nИгра началась! Загадано число от {min_val} до {max_val}.")
+        print(f"У вас {max_attempts} попыток. Удачи!\n")
+
+        while attempts < max_attempts:
+            attempts += 1
+            print(f"Попытка #{attempts}")
+
+            # Ввод и валидация числа
+            guess = InputValidator.get_integer("Введите ваше число: ")
+
+            if guess < min_val or guess > max_val:
+                print(f"Число должно быть в диапазоне от {min_val} до {max_val}. Попытка не засчитывается.")
+                attempts -= 1  # Попытка не засчитывается
+                continue
+
+            # Проверка на победу
+            if guess == secret_number:
+                end_time = time.time()
+                elapsed_time = end_time - start_time
+                return {
+                    'won': True,
+                    'attempts_used': attempts,
+                    'time_elapsed': elapsed_time,
+                    'secret_number': secret_number
+                }
+
+            # Подсказки, если включены
+            if hints_enabled:
+                if guess < secret_number:
+                    print("Загаданное число больше")
+                else:
+                    print("Загаданное число меньше")
+
+            print("Неверно! Попробуйте ещё раз.\n")
+
+        # Если попытки закончились
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        return {
+            'won': False,
+            'attempts_used': max_attempts,
+            'time_elapsed': elapsed_time,
+            'secret_number': secret_number
+        }
