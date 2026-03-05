@@ -1,0 +1,23 @@
+class ScoreEngine:
+    @staticmethod
+    def calculate_score(start_score, attempts_used, max_attempts, time_elapsed, won):
+        """Расчёт итогового счёта с учётом штрафов и бонусов"""
+        score = start_score
+
+        # Штраф за попытки: фиксированный процент за каждую попытку
+        penalty_per_attempt = 10  # 10% за попытку
+        attempts_penalty = (attempts_used / max_attempts) * penalty_per_attempt * score
+        score -= attempts_penalty
+
+        # Штраф за время: 1 очко за секунду
+        time_penalty = time_elapsed * 0.5
+        score -= time_penalty
+
+        # Бонус за скорость: если угадано менее чем за 10 секунд
+        if won and time_elapsed < 10:
+            score *= 2
+
+        # Гарантируем, что счёт не станет отрицательным
+        score = max(0, score)
+
+        return round(score, 2)
