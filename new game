@@ -1,0 +1,53 @@
+def main():
+    print("Добро пожаловать в игру «Числовой квест»!")
+    print("=" * 40)
+
+    while True:
+        # Настройка параметров игры
+        print("\nНастройка параметров игры:")
+        min_val = InputValidator.get_integer("Минимальное число: ")
+        max_val = InputValidator.get_integer("Максимальное число: ")
+        while max_val <= min_val:
+            print("Максимальное число должно быть больше минимального!")
+            max_val = InputValidator.get_integer("Максимальное число: ")
+
+        max_attempts = InputValidator.get_integer("Лимит попыток: ")
+        start_score = InputValidator.get_integer("Стартовый капитал (очки): ")
+        hints_enabled = InputValidator.get_boolean("Включить подсказки (да/нет)? ")
+
+        # Игровой процесс
+        game_result = GameLogic.play_round(
+            min_val, max_val, max_attempts, hints_enabled, start_score
+        )
+
+        # Расчёт очков
+        final_score = ScoreEngine.calculate_score(
+            start_score, game_result['attempts_used'],
+            max_attempts, game_result['time_elapsed'], game_result['won']
+        )
+        game_result['final_score'] = final_score
+
+        # Вывод результата
+        print("\n" + "=" * 40)
+        if game_result['won']:
+            print(f"Поздравляем! Вы угадали число {game_result['secret_number']} за {game_result['attempts_used']} попыток!")
+        else:
+            print(f"Игра окончена! Вы не угадали число {game_result['secret_number']}.")
+
+        print(f"Затраченное время: {round(game_result['time_elapsed'], 2)} секунд")
+        print(f"Итоговые очки: {final_score}")
+
+        # Запись в лог
+        Logger.log_result(game_result)
+
+        # Предложение сыграть ещё раз
+        play_again = InputValidator.get_boolean("\nСыграть ещё раз (да/нет)? ")
+        if not play_again:
+            break
+
+    # Показать историю последних игр
+    Logger.display_history()
+    print("Спасибо за игру!")
+
+if __name__ == "__main__":
+    main()
